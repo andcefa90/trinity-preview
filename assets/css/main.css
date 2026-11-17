@@ -204,10 +204,15 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .trio { padding: 22vh var(--gutter) 18vh; }
 .trio__title { font-size: var(--h2); max-width: 12ch; }
 .trio__body { margin-top: 10vh; display: grid; grid-template-columns: 5fr 7fr; gap: var(--gutter); align-items: center; }
-.mark--trio { width: min(38vw, 520px); height: auto; aspect-ratio: 1; justify-self: center; }
+.mark--trio { width: min(38vw, 520px); height: auto; aspect-ratio: 214 / 202; max-width: 100%; justify-self: center; overflow: visible; }
+.tmb .tmb-shine { mix-blend-mode: screen; pointer-events: none; }
+.tmb .tmb-icon { transition: opacity .6s var(--ease), filter .6s var(--ease); }
+.tmb.has-focus .tmb-icon:not(.is-focus) path { opacity: .2; transition: opacity .6s var(--ease); }
+.tmb .tmb-icon.is-focus path { fill: var(--umber); }
+.tmb.has-focus .tmb-icon.is-focus { filter: drop-shadow(0 0 6px rgba(184,146,90,.6)); }
 .trio__list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--line); }
 .trio__list li { border-bottom: 1px solid var(--line); }
-.trio__list a { display: grid; grid-template-columns: 4rem 1fr; text-decoration: none; padding: 2.2rem 0; transition: padding-left .6s var(--ease); }
+.trio__list a { display: grid; grid-template-columns: 4rem 1fr auto; align-items: center; text-decoration: none; padding: 2.2rem 0; transition: padding-left .6s var(--ease); }
 .trio__list a:hover { padding-left: 1rem; }
 .trio__list .mono { grid-row: span 2; padding-top: .9em; color: var(--gold-lo); }
 .trio__list b { font: 400 clamp(2rem, 4vw, 4.2rem)/1 var(--serif); }
@@ -253,6 +258,20 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .opener__media img { transition: filter .8s var(--ease); }
 .ext { font-style: normal; font-size: .5em; vertical-align: super; opacity: .55; margin-left: .2em; }
 
+/* ---------- Brand logos: one-colour marks, tinted by currentColor ---------- */
+.logo { display: block; flex: none; height: var(--h, 3rem); width: calc(var(--h, 3rem) * var(--ar)); background-color: currentColor;
+  -webkit-mask: var(--logo) center / contain no-repeat; mask: var(--logo) center / contain no-repeat; }
+.logo--scaping { --logo: url("../img/logos/cali-scaping.svg"); --ar: 1.086; }
+.logo--home { --logo: url("../img/logos/cali-home.svg"); --ar: 1.144; }
+.logo--water { --logo: url("../img/logos/cali-water.svg"); --ar: 1.311; }
+.logo--tmb { --logo: url("../img/logos/tmb-mono.svg"); --ar: 1.056; }
+.trio__logo { --h: clamp(2.6rem, 4.4vw, 4.2rem); grid-column: 3; grid-row: 1 / span 2; color: var(--umber); opacity: .78; transition: opacity .6s var(--ease), transform .8s var(--ease); }
+.trio__list a:hover .trio__logo, .trio__list a:focus-visible .trio__logo { opacity: 1; transform: scale(1.06); }
+.choice__logo { --h: clamp(3.4rem, 4.4vw, 4.6rem); color: var(--bone); margin-bottom: 1rem; opacity: .9; }
+.choice:hover .choice__logo { color: var(--gold-hi); opacity: 1; }
+.site__mark > svg { display: block; width: 100%; height: 100%; }
+.site__brand { position: absolute; left: var(--bx, 50%); top: var(--by, 50%); width: 22%; height: auto; aspect-ratio: var(--ar); translate: -50% -50%; color: var(--bone); opacity: 0; filter: drop-shadow(0 6px 24px rgba(0,0,0,.45)); }
+
 /* ---------- The three worlds — one chapter format on the drawing board ---------- */
 #scaping { --tint: 27,31,22; --img: saturate(.75) brightness(.95); }
 #home { --tint: 30,20,13; --img: saturate(.7) sepia(.12); }
@@ -270,7 +289,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   background-size: 64px 64px; background-position: center;
   mask-image: radial-gradient(ellipse at 62% 46%, #000 0, transparent 62%);
 }
-.mark--site { position: absolute; width: min(62vh, 40vw); height: auto; aspect-ratio: 1; right: 5vw; top: 50%; translate: 0 -50%; }
+.site__mark { position: absolute; width: min(62vh, 40vw); height: auto; aspect-ratio: 1; right: 5vw; top: 50%; translate: 0 -50%; }
 .mark .dash { fill: none; stroke: var(--gold-hi); stroke-width: 2; stroke-dasharray: 8 8; vector-effect: non-scaling-stroke; animation: crawl 6s linear infinite; }
 .mark .note { font: 400 22px var(--serif); font-style: italic; fill: var(--gold-hi); }
 .mark .guide--dash { stroke-dasharray: 4 6; }
@@ -362,7 +381,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .trio__body { grid-template-columns: 1fr; }
   .mark--trio { width: min(60vw, 420px); }
   .portal__side { width: min(50vw, 420px); }
-  .mark--site { width: min(60vw, 520px); right: 50%; translate: 50% -62%; opacity: .9; }
+  .site__mark { width: min(60vw, 520px); right: 50%; translate: 50% -62%; opacity: .9; }
   .site__type { max-width: none; bottom: 22vh; }
   .vision { grid-template-columns: 1fr; gap: 8vh; }
   .choices--row { grid-template-columns: 1fr 1fr; }
@@ -386,7 +405,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .hero__foot p:first-child { display: none; }
 
   .trio { padding-top: 16vh; }
-  .trio__list a { grid-template-columns: 2.6rem 1fr; padding: 1.6rem 0; }
+  .trio__list a { grid-template-columns: 2.6rem 1fr auto; padding: 1.6rem 0; }
 
   /* portals: title up top, the way in at the thumb */
   .opener__media { clip-path: ellipse(22% 14% at 50% 45%); }
@@ -398,7 +417,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .portal__enter b { font-size: 1.5rem; }
   .portal__enter::before { transform: scaleX(1); }
 
-  .mark--site { width: 92vw; translate: 50% -78%; }
+  .site__mark { width: 92vw; translate: 50% -78%; }
   .site__top { flex-direction: column; gap: .6rem; }
   .site__type { bottom: 26vh; }
   .site__title em { display: block; }

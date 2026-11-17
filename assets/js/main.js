@@ -95,7 +95,7 @@
     if (shine) {
       const lg = mk('linearGradient', { id: sid, gradientUnits: 'userSpaceOnUse', x1: -160, y1: -260, x2: 160, y2: 260, gradientTransform: 'translate(-700 0)' }, defs);
       [[0.32, 0], [0.5, 1], [0.68, 0]].forEach(([o, a]) => mk('stop', { offset: o, 'stop-color': '#FFF6DF', 'stop-opacity': a }, lg));
-      parts.shineGrad = lg;
+      parts.shineGrad = lg; parts.sweep = 700;
     }
     const addShine = (i, g) => shine && parts.shines.push(ell(i, 'shine', ribW * 0.7, g, { stroke: `url(#${sid})` }));
     const gilded = (i) => !draft.includes(i);
@@ -150,11 +150,23 @@
   const waterLive = W.status === 'active';
   const introMark = buildMark($('#introMark'), { intro: true });
   const navMark = buildMark($('#navMark'), { weight: 1.5 });
-  const trioMark = buildMark($('#trioMark'), { shine: true });
+  // Three worlds: the real Trinity mark (inlined from the brand file) — six ribbon segments, three icons
+  const trioMark = $('#trioMark');
+  trioMark.parts = { segs: $$('.tmb-seg', trioMark), shines: $$('.tmb-shine', trioMark), icons: $$('.tmb-icon', trioMark), shineGrad: $('#tmbShine'), sweep: 320 };
+  const focusIcon = (idx) => {
+    trioMark.classList.toggle('has-focus', idx != null);
+    trioMark.parts.icons.forEach((g) => g.classList.toggle('is-focus', +g.dataset.ring === idx));
+  };
   // each world's chapter carries the full mark on the drawing board, its own ring in focus
   const siteMarks = $$('[data-site-mark]').map((svg) => {
     buildMark(svg, { guides: true, shine: true, draft: waterLive ? [] : [2] });
-    focusRings(svg, +svg.dataset.siteMark);
+    const i = +svg.dataset.siteMark;
+    focusRings(svg, i);
+    // the brand first appears inside its own ring (as in the Trinity mark), then takes over
+    const brand = svg.parentNode.querySelector('.site__brand');
+    brand.style.setProperty('--bx', `${50 + geom[i].cx / 6}%`);
+    brand.style.setProperty('--by', `${50 + geom[i].cy / 6}%`);
+    svg.brand = brand;
     return svg;
   });
   buildMark($('#footMark'), { weight: 1.5 });
@@ -399,12 +411,13 @@
 
     /* ---- 2 · Trio: the mark returns as an index ---- */
     if (!rm) {
-      const ribs = trioMark.parts.ribs.flat();
-      gsap.set(trioMark.parts.patches, { opacity: 0 });
-      gsap.timeline({ scrollTrigger: { trigger: '#trio', start: 'top 70%', end: 'center 55%', scrub: 0.8 } })
-        .fromTo(ribs, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, stagger: 0.05, ease: 'none' })
-        .to(trioMark.parts.patches, { opacity: 1, duration: 0.05 })
-        .fromTo(trioMark.parts.shines, { opacity: 0 }, { opacity: 1, duration: 0.05 });
+      const T = trioMark.parts;
+      // the ribbons arrive one by one and lock into the knot, then each world's icon settles in its ring
+      gsap.timeline({ scrollTrigger: { trigger: '#trio', start: 'top 75%', end: 'center 55%', scrub: 0.8 } })
+        .fromTo(T.segs, { opacity: 0, scale: 0.6, rotation: (i) => (i % 2 ? -40 : 40), svgOrigin: '131 120' },
+          { opacity: 1, scale: 1, rotation: 0, stagger: 0.12, duration: 0.5, ease: 'power3.out' })
+        .fromTo(T.icons, { opacity: 0, scale: 0.4, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, stagger: 0.1, duration: 0.3, ease: 'back.out(2)' }, '-=0.15')
+        .fromTo(T.shines, { opacity: 0 }, { opacity: 1, duration: 0.05 });
       gsap.from('.trio__title', { yPercent: 30, opacity: 0, duration: 1.4, ease: 'expo.out', scrollTrigger: { trigger: '.trio__title', start: 'top 85%' } });
       gsap.from('.trio__list li', { y: 40, opacity: 0, duration: 1.2, stagger: 0.12, ease: 'expo.out', scrollTrigger: { trigger: '.trio__list', start: 'top 85%' } });
     }
@@ -414,8 +427,8 @@
       const sec = svg.closest('.site'), P = svg.parts, q = (sel) => $$(sel, sec);
       const lines = P.guides.filter((g) => g.getAttribute('pathLength'));
       const dots = P.guides.filter((g) => !g.getAttribute('pathLength'));
-      if (rm) return;
-      gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, pin: $('.site__pin', sec), start: 'top top', end: '+=140%', scrub: 0.7 } })
+      if (rm) { gsap.set(svg.brand, { opacity: 1, left: '50%', top: '50%', scale: 2.2 }); gsap.set(svg, { opacity: 0.2 }); return; }
+      gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, pin: $('.site__pin', sec), start: 'top top', end: '+=190%', scrub: 0.7 } })
         .fromTo(q('.site__media img'), { scale: 1.3, opacity: 0.15 }, { scale: 1.05, opacity: 0.55, duration: 1.4 }, 0)
         .fromTo(q('.site__grid'), { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0)
         .fromTo(lines, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, stagger: 0.04 }, 0.05)
@@ -426,7 +439,11 @@
         .fromTo(q('.site__title span'), { x: () => -vw() * 0.15, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, 0.3)
         .fromTo(q('.site__title em'), { x: () => vw() * 0.15, opacity: 0 }, { x: 0, opacity: 1, duration: 0.7, ease: 'power2.out' }, 0.3)
         .fromTo(q('.site__num, .site__line, .site__top, .site__foot'), { opacity: 0, y: 20 }, { opacity: 1, y: 0, stagger: 0.08, duration: 0.35, ease: 'power3.out' }, 0.9)
-        .to({}, { duration: 0.35 });
+        // ring → brand: the logo surfaces inside its ring, then grows out of it while the drawing recedes
+        .fromTo(svg.brand, { opacity: 0, scale: 0.5, filter: 'blur(8px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.35, ease: 'power2.out' }, 1.1)
+        .to(svg.brand, { left: '50%', top: '50%', scale: 2.2, duration: 0.6, ease: 'power2.inOut' }, 1.55)
+        .to(svg, { opacity: 0.18, scale: 0.92, transformOrigin: '50% 50%', duration: 0.6, ease: 'power2.inOut' }, 1.55)
+        .to({}, { duration: 0.3 });
     });
 
     /* ---- 6 · Manifesto · vision · close ---- */
@@ -443,8 +460,8 @@
 
   /* ---------- trio: the mark is alive — light, float, tilt ---------- */
   const sweep = (dur = 2.6, svg = trioMark) => gsap.fromTo(svg.parts.shineGrad,
-    { attr: { gradientTransform: 'translate(-700 0)' } },
-    { attr: { gradientTransform: 'translate(700 0)' }, duration: dur, ease: 'power2.inOut', overwrite: true });
+    { attr: { gradientTransform: `translate(${-svg.parts.sweep} 0)` } },
+    { attr: { gradientTransform: `translate(${svg.parts.sweep} 0)` }, duration: dur, ease: 'power2.inOut', overwrite: true });
   if (!reduce) {
     // a slow, irregular light pass across the gold
     const loop = () => { sweep(); gsap.delayedCall(4.5 + Math.random() * 2.5, loop); };
@@ -470,7 +487,7 @@
 
   /* ---------- trio hover → ring focus ---------- */
   $$('.trio__list li').forEach((li) => {
-    const on = () => { focusRings(trioMark, +li.dataset.ring); reduce || sweep(1.3); }, off = () => focusRings(trioMark, null);
+    const on = () => { focusIcon(+li.dataset.ring); reduce || sweep(1.3); }, off = () => focusIcon(null);
     li.addEventListener('pointerenter', on); li.addEventListener('pointerleave', off);
     li.addEventListener('focusin', on); li.addEventListener('focusout', off);
   });

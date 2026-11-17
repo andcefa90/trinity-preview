@@ -25,7 +25,7 @@ window.TRINITY = {
       url: 'https://caliscaping.com/', domain: 'caliscaping.com',
       // Cali Scaping's own project photography
       image: { src: 'assets/img/scaping.webp', alt: 'Cedar deck opening onto a stone-path garden with outdoor kitchen and fire pit' },
-      copy: { badge: '', kicker: 'Chapter I — Now building', title: 'Outdoor rooms, composed, built and lit as one.', status: 'Live · caliscaping.com', cta: 'Enter Cali Scaping' },
+      copy: { badge: '', kicker: 'Landscape Design & Outdoor Living', title: 'Outdoor rooms, composed, built and lit as one.', status: 'Now building', cta: 'Enter Cali Scaping' },
       vision: ['Landscape design', 'Outdoor kitchens', 'Hardscape + stone', 'Garden lighting'],
     },
     home: {
@@ -34,7 +34,7 @@ window.TRINITY = {
       statement: 'Premium kitchen, bath and interior renovations — every room considered, every finish intentional.',
       url: 'https://calihomeimprovements.com/', domain: 'calihomeimprovements.com',
       image: { src: 'assets/img/home.jpg', alt: 'Living room with a full-height walnut wall' }, // PLACEHOLDER
-      copy: { badge: '', kicker: 'Chapter II — Now building', title: 'Every room considered. Every finish intentional.', status: 'Live · calihomeimprovements.com', cta: 'Enter Cali Home' },
+      copy: { badge: '', kicker: 'Home Remodeling & Improvements', title: 'Every room considered. Every finish intentional.', status: 'Now building', cta: 'Enter Cali Home' },
       vision: ['Kitchens', 'Bathrooms', 'Interiors', 'Whole-home remodels'],
     },
     water: {
@@ -44,8 +44,8 @@ window.TRINITY = {
       url: '', domain: '', // set when the site launches
       image: { src: 'assets/img/water.jpg', alt: 'Courtyard pool glowing at night' }, // PLACEHOLDER
       copy: {
-        coming_soon: { badge: 'Coming soon', kicker: 'Chapter III — In construction', title: 'The next chapter of outdoor living is coming.', status: 'Being drawn now', cta: 'Be the first to know' },
-        active: { badge: '', kicker: 'Chapter III — Now open', title: 'Water, designed as architecture.', status: 'Now building', cta: 'Enter Cali WaterScapes' },
+        coming_soon: { badge: 'Coming soon', kicker: 'Custom Pools & Water Features', title: 'The future of outdoor living is coming.', status: 'Being drawn now', cta: 'Be the first to know' },
+        active: { badge: '', kicker: 'Custom Pools & Water Features', title: 'Water, designed as architecture.', status: 'Now building', cta: 'Enter Cali WaterScapes' },
       },
       vision: ['Custom pools', 'Water features', 'Fire + water', 'Light after dark'],
     },
