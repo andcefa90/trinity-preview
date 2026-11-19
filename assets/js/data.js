@@ -15,7 +15,7 @@ window.TRINITY = {
     phone: '925-381-1815',
   },
 
-  hero: { image: 'assets/img/hero.jpg', alt: 'Modern residence at dusk, glowing through floor-to-ceiling glass beneath a mature tree' }, // PLACEHOLDER
+  hero: { image: 'assets/img/hero.jpg', alt: 'Garden path at dusk leading to a lit stone-wall patio under a cedar pergola' }, // Trinity project
 
   services: {
     scaping: {
