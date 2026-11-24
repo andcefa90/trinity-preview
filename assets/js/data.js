@@ -17,6 +17,13 @@ window.TRINITY = {
 
   hero: { image: 'assets/img/hero.jpg', alt: 'Garden path at dusk leading to a lit stone-wall patio under a cedar pergola' }, // Trinity project
 
+  // Our story — DRAFT beats until the founder's story arrives; each beat lights one more ring
+  story: [
+    { kicker: 'One belief', title: 'A home is not built in pieces.', body: 'The garden, the rooms and the water should feel like one place, designed with the same care and built to the same standard.' },
+    { kicker: 'Three crafts', title: 'Every craft, its own specialist.', body: 'Cali Scaping shapes the land. Cali Home Improvements transforms the interiors. Cali WaterScapes brings water to life.' },
+    { kicker: 'One name', title: 'Trinity Master Builders.', body: 'Three companies, one team. We carry your vision from the first idea to the final detail, so the place you imagine is the place you live in.' },
+  ],
+
   services: {
     scaping: {
       name: 'Cali Scaping', numeral: 'I', status: 'active',
@@ -25,7 +32,7 @@ window.TRINITY = {
       url: 'https://caliscaping.com/', domain: 'caliscaping.com',
       // Cali Scaping's own project photography
       image: { src: 'assets/img/scaping.webp', alt: 'Cedar deck opening onto a stone-path garden with outdoor kitchen and fire pit' },
-      copy: { badge: '', kicker: 'Landscape Design & Outdoor Living', title: 'Outdoor rooms, composed, built and lit as one.', status: 'Now building', cta: 'Enter Cali Scaping' },
+      copy: { badge: '', kicker: 'Professional Landscaping', title: 'Designed to inspire. Build to last.', status: 'Now building', cta: 'Enter Cali Scaping' },
       vision: ['Landscape design', 'Outdoor kitchens', 'Hardscape + stone', 'Garden lighting'],
     },
     home: {
@@ -33,8 +40,8 @@ window.TRINITY = {
       line: 'Home Remodeling & Improvements',
       statement: 'Premium kitchen, bath and interior renovations — every room considered, every finish intentional.',
       url: 'https://calihomeimprovements.com/', domain: 'calihomeimprovements.com',
-      image: { src: 'assets/img/home.jpg', alt: 'Living room with a full-height walnut wall' }, // PLACEHOLDER
-      copy: { badge: '', kicker: 'Home Remodeling & Improvements', title: 'Every room considered. Every finish intentional.', status: 'Now building', cta: 'Enter Cali Home' },
+      image: { src: 'assets/img/home-kitchen.jpg', alt: 'Remodeled kitchen with warm under-cabinet lighting' }, // Cali Home Improvements project
+      copy: { badge: '', kicker: 'Interior Remodeling Services', title: 'Designed with vision. Built with precision.', status: 'Now building', cta: 'Enter Cali Home' },
       vision: ['Kitchens', 'Bathrooms', 'Interiors', 'Whole-home remodels'],
     },
     water: {

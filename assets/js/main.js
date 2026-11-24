@@ -151,8 +151,19 @@
   const introMark = buildMark($('#introMark'), { intro: true });
   const navMark = buildMark($('#navMark'), { weight: 1.5 });
   // Three worlds: the real Trinity mark (inlined from the brand file) — six ribbon segments, three icons
+  const tmbParts = (svg) => (svg.parts = { segs: $$('.tmb-seg', svg), shines: $$('.tmb-shine', svg), icons: $$('.tmb-icon', svg), shineGrad: $('linearGradient', svg), sweep: 320 });
   const trioMark = $('#trioMark');
-  trioMark.parts = { segs: $$('.tmb-seg', trioMark), shines: $$('.tmb-shine', trioMark), icons: $$('.tmb-icon', trioMark), shineGrad: $('#tmbShine'), sweep: 320 };
+  // the same mark lives again in the chooser and the close — cloned with its own ids
+  const cloneTmb = (host, id) => {
+    const c = trioMark.cloneNode(true);
+    c.id = id; c.setAttribute('class', 'tmb'); c.setAttribute('aria-hidden', 'true'); c.removeAttribute('role');
+    c.innerHTML = c.innerHTML.replace(/tmbC(\d)/g, `${id}C$1`).replace(/tmbShine/g, `${id}Shine`);
+    host.appendChild(c);
+    return tmbParts(c), c;
+  };
+  tmbParts(trioMark);
+  const pathMark = cloneTmb($('#pathMark'), 'pathTmb');
+  const closeMark = cloneTmb($('#closeMark'), 'closeTmb');
   const focusIcon = (idx) => {
     trioMark.classList.toggle('has-focus', idx != null);
     trioMark.parts.icons.forEach((g) => g.classList.toggle('is-focus', +g.dataset.ring === idx));
@@ -170,6 +181,9 @@
     return svg;
   });
   buildMark($('#footMark'), { weight: 1.5 });
+  // Our story: the drawing-board mark, each ring gilded as its beat arrives
+  const storyMark = buildMark($('#storyMark'), { guides: true, shine: true });
+  $$('.story__logo').forEach((l) => { const g = geom[+l.dataset.ring]; l.style.setProperty('--bx', `${50 + g.cx / 6}%`); l.style.setProperty('--by', `${50 + g.cy / 6}%`); });
 
   /* ==========================================================================
      CONTENT (rendered from the CMS payload)
@@ -198,9 +212,25 @@
   const mail = $('#mailLink'); mail.href = `mailto:${D.settings.email}`; mail.textContent = D.settings.email;
   $$('[data-phone]').forEach((a) => { a.href = `tel:${D.settings.phone.replace(/\D/g, '')}`; a.textContent = D.settings.phone; });
 
-  // Manifesto → words
-  const man = $('#manifesto');
-  man.innerHTML = man.textContent.split(' ').map((w) => `<span class="w">${w}</span>`).join(' ');
+  // Our story beats
+  $('#storyBeats').innerHTML = D.story.map((b, i) =>
+    `<article class="story__beat"${i ? ' aria-hidden="true"' : ''}><p class="mono story__k">${b.kicker}</p><h3 class="display story__h">${b.title}</h3><p class="story__p">${b.body}</p></article>`).join('');
+  $('#storyAll').textContent = String(D.story.length).padStart(2, '0');
+
+  // Start a project — each business line goes to its own site; the whole property goes to Trinity by email
+  $$('[data-path]').forEach((a) => {
+    const key = a.dataset.path;
+    if (key === 'complete') {
+      a.href = `mailto:${D.settings.email}?subject=${encodeURIComponent('Complete transformation — project request')}&body=${encodeURIComponent('Hi Trinity team,\n\nI would like to talk about a complete transformation of my property.\n\nLocation:\nWhat I have in mind:\n\nThank you,\n')}`;
+      return;
+    }
+    const S = D.services[key], live = S.status === 'active' && S.url;
+    const c = key === 'water' ? S.copy[waterLive ? 'active' : 'coming_soon'] : S.copy;
+    $('[data-path-slogan]', a).textContent = c.title;
+    $('[data-path-cta]', a).textContent = live ? `Visit ${S.name}` : c.cta;
+    if (live) { a.href = S.url; a.dataset.portal = key; }
+    else a.href = `mailto:${D.settings.email}?subject=${encodeURIComponent(`${S.name} — keep me posted`)}`;
+  });
   $('#year').textContent = new Date().getFullYear();
 
   /* ==========================================================================
@@ -233,6 +263,7 @@
   addEventListener('keydown', (e) => { if (e.key === 'Escape' && menu.classList.contains('is-open')) { setMenu(false); menuBtn.focus(); } });
 
   document.addEventListener('click', (e) => {
+    if (e.target.closest('#pathComplete')) { track('form_start', { type: 'Complete transformation', method: 'email' }); return; }
     const portal = e.target.closest('[data-portal]');
     if (portal) { track('service_click', { service: portal.dataset.portal, url: portal.href, source: portal.closest('section,footer,nav')?.id || 'page' }); return; }
     const c = e.target.closest('a[href^="mailto:"],a[href^="tel:"]');
@@ -428,7 +459,13 @@
       const lines = P.guides.filter((g) => g.getAttribute('pathLength'));
       const dots = P.guides.filter((g) => !g.getAttribute('pathLength'));
       if (rm) { gsap.set(svg.brand, { opacity: 1, left: '50%', top: '50%', scale: 2.2 }); gsap.set(svg, { opacity: 0.2 }); return; }
-      gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, pin: $('.site__pin', sec), start: 'top top', end: '+=190%', scrub: 0.7 } })
+      // offset that brings the brand from the ring drawing to the centre of the screen
+      const toCentre = (axis) => () => {
+        const el = svg.parentNode, p = $('.site__pin', sec).getBoundingClientRect(), m = el.getBoundingClientRect();
+        const g = gsap.getProperty(el, axis); // ignore any offset already applied
+        return axis === 'x' ? p.left + p.width / 2 - (m.left - g + m.width / 2) : p.top + p.height / 2 - (m.top - g + m.height / 2);
+      };
+      gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: sec, pin: $('.site__pin', sec), start: 'top top', end: '+=300%', scrub: 0.7, invalidateOnRefresh: true } })
         .fromTo(q('.site__media img'), { scale: 1.3, opacity: 0.15 }, { scale: 1.05, opacity: 0.55, duration: 1.4 }, 0)
         .fromTo(q('.site__grid'), { opacity: 0 }, { opacity: 1, duration: 0.6 }, 0)
         .fromTo(lines, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, stagger: 0.04 }, 0.05)
@@ -443,14 +480,64 @@
         .fromTo(svg.brand, { opacity: 0, scale: 0.5, filter: 'blur(8px)' }, { opacity: 1, scale: 1, filter: 'blur(0px)', duration: 0.35, ease: 'power2.out' }, 1.1)
         .to(svg.brand, { left: '50%', top: '50%', scale: 2.2, duration: 0.6, ease: 'power2.inOut' }, 1.55)
         .to(svg, { opacity: 0.18, scale: 0.92, transformOrigin: '50% 50%', duration: 0.6, ease: 'power2.inOut' }, 1.55)
-        .to({}, { duration: 0.3 });
+        // the brand stands alone: everything else steps back, the screen stays held on the logo
+        .to(q('.site__type, .site__top, .site__foot'), { opacity: 0, y: -16, duration: 0.45, ease: 'power2.in' }, 2.3)
+        .to([svg, ...q('.site__grid')], { opacity: 0, duration: 0.45 }, 2.3)
+        .to(q('.site__media img'), { opacity: 0.22, scale: 1.12, duration: 0.6 }, 2.3)
+        .to(svg.parentNode, { x: toCentre('x'), y: toCentre('y'), duration: 0.6, ease: 'power2.inOut' }, 2.3)
+        .to(svg.brand, { scale: 2.9, duration: 0.6, ease: 'power2.inOut' }, 2.3)
+        .to({}, { duration: 0.7 });
     });
 
-    /* ---- 6 · Manifesto · vision · close ---- */
+    /* ---- 6 · Our story: one beat per ring, then the knot closes ---- */
+    {
+      const P = storyMark.parts, beats = $$('.story__beat'), n = beats.length;
+      const lines = P.guides.filter((g) => g.getAttribute('pathLength'));
+      const ring = (i) => $$(`.ring[data-ring="${i}"]`, storyMark);
+      const logos = $$('.story__logo');
+      const setBeat = (i) => {
+        beats.forEach((b, k) => { b.classList.toggle('is-on', k === i); b.setAttribute('aria-hidden', k !== i); });
+        $('#storyNow').textContent = String(i + 1).padStart(2, '0');
+      };
+      setBeat(0);
+      if (rm) { beats.forEach((b) => { b.classList.add('is-on'); b.removeAttribute('aria-hidden'); }); }
+      else {
+        const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
+          trigger: '#story', pin: '.story__pin', start: 'top top', end: `+=${n * 110}%`, scrub: 0.7,
+          onUpdate: (s) => { setBeat(Math.min(n - 1, Math.floor(s.progress * n * 0.999))); gsap.set('#storyBar', { scaleX: s.progress }); },
+        } });
+        // beat 1 — the drawing board: guides and the three hairlines
+        tl.fromTo('.story__grid', { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0)
+          .fromTo(lines, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, stagger: 0.04 }, 0)
+          .fromTo(P.hairs, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, stagger: 0.1 }, 0.3)
+          .set([...P.ribs.flat(), ...P.patches, ...P.shines], { opacity: 0 }, 0)
+          .set(logos, { opacity: 0, scale: 0.6 }, 0);
+        // beat 2 — each craft takes its ring, with its brand inside
+        [0, 1, 2].forEach((i) => {
+          tl.to(ring(i).filter((g) => !g.hasAttribute('mask')).flatMap((g) => [...g.children]), { opacity: 1, duration: 0.25 }, 1 + i * 0.28)
+            .to(logos[i], { opacity: 1, scale: 1, duration: 0.25, ease: 'back.out(2)' }, 1.05 + i * 0.28);
+        });
+        // beat 3 — the weave closes into one name
+        tl.to([...P.patches, ...P.shines], { opacity: 1, duration: 0.2 }, 2.05)
+          .to([...P.guides, ...P.hairs], { opacity: 0.25, duration: 0.4 }, 2.1)
+          .to('.story__mark', { scale: 1.06, duration: 0.5, ease: 'power2.out' }, 2.1)
+          .to({}, { duration: 0.6 }, 2.4);
+      }
+    }
+
+    /* ---- 7 · Start a project: the four ways in rise like the worlds before them ---- */
     if (!rm) {
-      gsap.to('#manifesto .w', { opacity: 1, stagger: 0.1, ease: 'none', scrollTrigger: { trigger: '#manifesto', start: 'top 78%', end: 'bottom 45%', scrub: true } });
-      gsap.from('.vision__intro > *', { y: 40, opacity: 0, stagger: 0.1, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '#vision', start: 'top 70%' } });
+      gsap.fromTo('.path', { clipPath: 'inset(100% 0% 0% 0%)' }, { clipPath: 'inset(0% 0% 0% 0%)', stagger: 0.1, ease: 'power3.out',
+        scrollTrigger: { trigger: '#paths', start: 'top 85%', end: 'top 35%', scrub: 0.8 } });
+      gsap.fromTo('.path__media img', { scale: 1.3 }, { scale: 1, ease: 'none', scrollTrigger: { trigger: '#paths', start: 'top bottom', end: 'bottom top', scrub: true } });
+    }
+
+    /* ---- 8 · Vision · close ---- */
+    if (!rm) {
+      gsap.from('.paths__head > *', { y: 40, opacity: 0, stagger: 0.1, duration: 1.2, ease: 'expo.out', scrollTrigger: { trigger: '#vision', start: 'top 70%' } });
       gsap.from('.close__title', { yPercent: 25, opacity: 0, duration: 1.6, ease: 'expo.out', scrollTrigger: { trigger: '.close', start: 'top 70%' } });
+      assemble(pathMark, { trigger: '#paths', start: 'top 80%', end: 'top 35%', scrub: 0.8 });
+      assemble(closeMark, { trigger: '.close', start: 'top 75%', end: 'top 15%', scrub: 0.8 });
     }
 
     ScrollTrigger.sort();
@@ -459,30 +546,40 @@
   atmosTriggers();
 
   /* ---------- trio: the mark is alive — light, float, tilt ---------- */
+  function assemble(svg, st) {
+    const T = svg.parts;
+    gsap.timeline({ scrollTrigger: st })
+      .fromTo(T.segs, { opacity: 0, scale: 0.6, rotation: (i) => (i % 2 ? -40 : 40), svgOrigin: '131 120' },
+        { opacity: 1, scale: 1, rotation: 0, stagger: 0.12, duration: 0.5, ease: 'power3.out' })
+      .fromTo(T.icons, { opacity: 0, scale: 0.4, transformOrigin: '50% 50%' }, { opacity: 1, scale: 1, stagger: 0.1, duration: 0.3, ease: 'back.out(2)' }, '-=0.15')
+      .fromTo(T.shines, { opacity: 0 }, { opacity: 1, duration: 0.05 });
+  }
+  function alive(svg, area, trigger) {
+    const loop = () => { sweep(2.6, svg); gsap.delayedCall(4.5 + Math.random() * 2.5, loop); };
+    ScrollTrigger.create({ trigger, start: 'top 40%', once: true, onEnter: () => gsap.delayedCall(0.8, loop) });
+    gsap.to(svg, { y: -12, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 });
+    if (!fine) return;
+    gsap.set(svg, { transformPerspective: 900 });
+    const rx = gsap.quickTo(svg, 'rotationX', { duration: 1.2, ease: 'power3.out' });
+    const ry = gsap.quickTo(svg, 'rotationY', { duration: 1.2, ease: 'power3.out' });
+    area.addEventListener('pointermove', (e) => {
+      const r = svg.getBoundingClientRect();
+      ry(((e.clientX - (r.left + r.width / 2)) / r.width) * 18);
+      rx(-((e.clientY - (r.top + r.height / 2)) / r.height) * 14);
+    });
+    area.addEventListener('pointerleave', () => { rx(0); ry(0); });
+  }
   const sweep = (dur = 2.6, svg = trioMark) => gsap.fromTo(svg.parts.shineGrad,
     { attr: { gradientTransform: `translate(${-svg.parts.sweep} 0)` } },
     { attr: { gradientTransform: `translate(${svg.parts.sweep} 0)` }, duration: dur, ease: 'power2.inOut', overwrite: true });
   if (!reduce) {
-    // a slow, irregular light pass across the gold
-    const loop = () => { sweep(); gsap.delayedCall(4.5 + Math.random() * 2.5, loop); };
-    ScrollTrigger.create({ trigger: '#trio', start: 'top 40%', once: true, onEnter: () => gsap.delayedCall(0.8, loop) });
-    siteMarks.forEach((svg) => {
+    alive(trioMark, $('.trio__body'), '#trio');
+    alive(pathMark, $('#pathComplete'), '#paths');
+    alive(closeMark, $('.close'), '.close');
+    [...siteMarks, storyMark].forEach((svg) => {
       const loopS = () => { sweep(2.8, svg); gsap.delayedCall(5 + Math.random() * 3, loopS); };
-      ScrollTrigger.create({ trigger: svg.closest('.site'), start: 'top 20%', once: true, onEnter: () => gsap.delayedCall(1.2, loopS) });
+      ScrollTrigger.create({ trigger: svg.closest('section'), start: 'top 20%', once: true, onEnter: () => gsap.delayedCall(1.2, loopS) });
     });
-    gsap.to('#trioMark', { y: -12, duration: 3.2, ease: 'sine.inOut', yoyo: true, repeat: -1 });
-    if (fine) {
-      const body = $('.trio__body'), m = $('#trioMark');
-      gsap.set(m, { transformPerspective: 900 });
-      const rx = gsap.quickTo(m, 'rotationX', { duration: 1.2, ease: 'power3.out' });
-      const ry = gsap.quickTo(m, 'rotationY', { duration: 1.2, ease: 'power3.out' });
-      body.addEventListener('pointermove', (e) => {
-        const r = m.getBoundingClientRect();
-        ry(((e.clientX - (r.left + r.width / 2)) / r.width) * 18);
-        rx(-((e.clientY - (r.top + r.height / 2)) / r.height) * 14);
-      });
-      body.addEventListener('pointerleave', () => { rx(0); ry(0); });
-    }
   }
 
   /* ---------- trio hover → ring focus ---------- */
@@ -492,47 +589,11 @@
     li.addEventListener('focusin', on); li.addEventListener('focusout', off);
   });
 
-  /* ==========================================================================
-     BUILD YOUR VISION — a router first, a short brief only for full transformations.
-     Landscape / Home go straight to their own sites; Water goes to its chapter.
-     ========================================================================== */
-  const form = $('#builder');
-  const steps = $$('.step', form);
-  const total = steps.filter((s) => s.dataset.step !== 'done').length;
-  let at = 0, started = false;
-  $('#stepAll').textContent = total;
-
-  const go = (i) => {
-    at = Math.max(0, Math.min(i, steps.length - 1));
-    steps.forEach((s, k) => s.classList.toggle('is-active', k === at));
-    const done = steps[at].dataset.step === 'done';
-    $('#stepNow').textContent = Math.min(at + 1, total);
-    $('#stepBar').style.width = `${done ? 100 : ((at + 1) / total) * 100}%`;
-    $('#backBtn').hidden = at === 0 || done;
-    if (at > 0) { const f = $('input, textarea', steps[at]) || steps[at]; setTimeout(() => f.focus({ preventScroll: true }), 50); }
-  };
-  $$('[data-water-choice]', form).forEach((b) => {
-    if (waterLive && W.url) { b.href = W.url; b.dataset.portal = 'water'; return; }
-    b.addEventListener('click', (e) => { e.preventDefault(); track('view_service', { service: 'water', source: 'builder' }); scrollTo('#water'); });
-  });
-  $('[data-complete]', form).addEventListener('click', () => { started = true; track('form_start', { type: 'Complete transformation' }); go(1); });
-  form.addEventListener('input', () => { if (!started) { started = true; track('form_start'); } });
-  form.addEventListener('change', (e) => { if (e.target.type === 'radio') setTimeout(() => go(at + 1), reduce ? 0 : 420); });
-  $$('[data-next]', form).forEach((b) => b.addEventListener('click', () => go(at + 1)));
-  form.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && e.target.matches('input:not([type=radio])') && steps[at].dataset.step !== 'contact') { e.preventDefault(); go(at + 1); }
-  });
-  $('#backBtn').addEventListener('click', () => go(at - 1));
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const F = form.elements, name = F.namedItem('name').value.trim(), email = F.namedItem('email').value.trim();
-    const err = $('#formError');
-    if (!name || !/^\S+@\S+\.\S+$/.test(email)) { err.textContent = 'Please add your name and a valid email so we can reach you.'; F.namedItem(!name ? 'name' : 'email').focus(); return; }
-    err.textContent = '';
-    // WordPress: POST to /wp-json/trinity/v1/vision (nonce-protected) — wired in the theme phase.
-    track('form_complete', { type: 'Complete transformation' });
-    go(steps.length - 1);
-  });
+  /* ---------- start a project: the open panel follows the pointer / focus ---------- */
+  const paths = $$('.path');
+  const openPath = (p) => paths.forEach((x) => x.classList.toggle('is-open', x === p));
+  paths.forEach((p) => { p.addEventListener('pointerenter', () => openPath(p)); p.addEventListener('focus', () => openPath(p)); });
+  $('#paths').addEventListener('pointerleave', () => openPath($('#pathComplete')));
 
   /* ---------- go ---------- */
   document.fonts.ready.then(() => { ScrollTrigger.refresh(); runIntro(); });

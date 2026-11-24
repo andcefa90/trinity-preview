@@ -72,7 +72,7 @@
       <li><a href="https://caliscaping.com/" data-portal="scaping"><span class="mono">I</span>Landscaping <i class="ext" aria-hidden="true">↗︎</i></a></li>
       <li><a href="https://calihomeimprovements.com/" data-portal="home"><span class="mono">II</span>Home Improvements <i class="ext" aria-hidden="true">↗︎</i></a></li>
       <li><a href="#water"><span class="mono">III</span>WaterScapes <em class="tag" data-water-tag></em></a></li>
-      <li><a href="#thinking"><span class="mono">—</span>About</a></li>
+      <li><a href="#story"><span class="mono">—</span>Our story</a></li>
       <li><a href="#vision"><span class="mono">→</span>Start a project</a></li>
     </ol>
   </nav>
@@ -361,7 +361,7 @@ txZhjgAAAABJRU5ErkJggg=="/></g></g><g class="tmb-shines"><rect class="tmb-shine"
       <div class="site__pin">
         <div class="site__media"><img alt="" data-src-key="scaping"></div>
         <div class="site__grid" aria-hidden="true"></div>
-        <div class="site__mark"><svg class="mark mark--site" data-site-mark="0" viewBox="-300 -300 600 600" aria-hidden="true"></svg><span class="site__brand logo logo--scaping" role="img" aria-label="Cali Scaping"></span></div>
+        <div class="site__mark"><svg class="mark mark--site" data-site-mark="0" viewBox="-300 -300 600 600" aria-hidden="true"></svg><a class="site__brand logo logo--scaping" data-site-link data-cursor="Enter" aria-label="Cali Scaping"></a></div>
         <div class="site__top mono"><span data-c="kicker"></span><span class="site__status"><i></i><span data-c="status"></span></span></div>
         <div class="site__type">
           <p class="mono site__num"><em class="tag tag--light" data-c="badge"></em></p>
@@ -379,7 +379,7 @@ txZhjgAAAABJRU5ErkJggg=="/></g></g><g class="tmb-shines"><rect class="tmb-shine"
       <div class="site__pin">
         <div class="site__media"><img alt="" data-src-key="home"></div>
         <div class="site__grid" aria-hidden="true"></div>
-        <div class="site__mark"><svg class="mark mark--site" data-site-mark="1" viewBox="-300 -300 600 600" aria-hidden="true"></svg><span class="site__brand logo logo--home" role="img" aria-label="Cali Home Improvements"></span></div>
+        <div class="site__mark"><svg class="mark mark--site" data-site-mark="1" viewBox="-300 -300 600 600" aria-hidden="true"></svg><a class="site__brand logo logo--home" data-site-link data-cursor="Enter" aria-label="Cali Home Improvements"></a></div>
         <div class="site__top mono"><span data-c="kicker"></span><span class="site__status"><i></i><span data-c="status"></span></span></div>
         <div class="site__type">
           <p class="mono site__num"><em class="tag tag--light" data-c="badge"></em></p>
@@ -397,7 +397,7 @@ txZhjgAAAABJRU5ErkJggg=="/></g></g><g class="tmb-shines"><rect class="tmb-shine"
       <div class="site__pin">
         <div class="site__media"><img alt="" data-src-key="water"></div>
         <div class="site__grid" aria-hidden="true"></div>
-        <div class="site__mark"><svg class="mark mark--site" data-site-mark="2" viewBox="-300 -300 600 600" aria-hidden="true"></svg><span class="site__brand logo logo--water" role="img" aria-label="Cali WaterScapes"></span></div>
+        <div class="site__mark"><svg class="mark mark--site" data-site-mark="2" viewBox="-300 -300 600 600" aria-hidden="true"></svg><a class="site__brand logo logo--water" data-site-link data-cursor="Enter" aria-label="Cali WaterScapes"></a></div>
         <div class="site__top mono"><span data-c="kicker"></span><span class="site__status"><i></i><span data-c="status"></span></span></div>
         <div class="site__type">
           <p class="mono site__num"><em class="tag tag--light" data-c="badge"></em></p>
@@ -411,74 +411,70 @@ txZhjgAAAABJRU5ErkJggg=="/></g></g><g class="tmb-shines"><rect class="tmb-shine"
       </div>
     </section>
 
-    <!-- ░░ 8 · HOW TRINITY THINKS ░░ -->
-    <section class="thinking" id="thinking" data-theme="light" data-atmos="bone" data-chapter="How Trinity thinks">
-      <p class="eyebrow mono">How Trinity thinks</p>
-      <p class="manifesto display" id="manifesto">We think like architects, build like craftsmen and finish every space as if it were our own home. Design and execution under one name — so the vision you fall in love with is exactly the place you live in.</p>
-
+    <!-- ░░ 6 · OUR STORY — the three rings come together, beat by beat (copy from data.js) ░░ -->
+    <section class="story" id="story" data-theme="dark" data-atmos="umber" data-chapter="Our story">
+      <div class="story__pin">
+        <div class="story__grid" aria-hidden="true"></div>
+        <div class="story__text">
+          <p class="eyebrow mono">Our story</p>
+          <div class="story__beats" id="storyBeats"></div>
+          <p class="story__progress mono" aria-hidden="true"><b id="storyNow">01</b> / <span id="storyAll">03</span><span class="story__bar"><i id="storyBar"></i></span></p>
+        </div>
+        <div class="story__mark">
+          <svg class="mark mark--story" id="storyMark" viewBox="-300 -300 600 600" aria-hidden="true"></svg>
+          <span class="story__logo logo logo--scaping" data-ring="0" aria-hidden="true"></span>
+          <span class="story__logo logo logo--home" data-ring="1" aria-hidden="true"></span>
+          <span class="story__logo logo logo--water" data-ring="2" aria-hidden="true"></span>
+        </div>
+      </div>
     </section>
 
-    <!-- ░░ 7 · BUILD YOUR VISION — routes to each business line ░░ -->
-    <section class="vision" id="vision" data-theme="dark" data-atmos="umber" data-chapter="Build your vision">
-      <div class="vision__intro">
-        <p class="eyebrow mono">Build your vision</p>
-        <h2 class="display vision__title">What are you <em>imagining?</em></h2>
-        <p class="vision__lead">Tell us about the place and the way you want to live in it. The right Trinity team will take it from there.</p>
-        <p class="mono vision__talk">Prefer to talk? <a data-phone></a></p>
+    <!-- ░░ 7 · START A PROJECT — four ways in; the whole property goes to Trinity ░░ -->
+    <section class="paths" id="vision" data-theme="dark" data-atmos="umber" data-chapter="Start a project">
+      <header class="paths__head">
+        <p class="eyebrow mono">Start a project</p>
+        <h2 class="display paths__title">Where does your <em>project begin?</em></h2>
+        <p class="mono paths__talk">Prefer to talk? <a data-phone></a></p>
+      </header>
+      <div class="paths__row" id="paths">
+        <a class="path path--tmb is-open" data-path="complete" id="pathComplete" data-cursor="Write us">
+          <div class="path__grid" aria-hidden="true"></div>
+          <div class="path__mark" id="pathMark"></div>
+          <div class="path__body">
+            <span class="path__k mono">Trinity Master Builders</span>
+            <b class="path__name display">Complete <em>transformation</em></b>
+            <p class="path__slogan">Landscape, home and water in one project, with one team for the whole property.</p>
+            <span class="path__cta mono">Request it by email <i aria-hidden="true">→</i></span>
+          </div>
+        </a>
+        <a class="path" data-path="scaping" data-cursor="Enter">
+          <div class="path__media"><img alt="" data-src-key="scaping"></div>
+          <div class="path__body">
+            <span class="logo logo--scaping path__logo" aria-hidden="true"></span>
+            <b class="path__name display">Landscape</b>
+            <p class="path__slogan" data-path-slogan></p>
+            <span class="path__cta mono"><span data-path-cta></span> <i aria-hidden="true">↗︎</i></span>
+          </div>
+        </a>
+        <a class="path" data-path="home" data-cursor="Enter">
+          <div class="path__media"><img alt="" data-src-key="home"></div>
+          <div class="path__body">
+            <span class="logo logo--home path__logo" aria-hidden="true"></span>
+            <b class="path__name display">Home</b>
+            <p class="path__slogan" data-path-slogan></p>
+            <span class="path__cta mono"><span data-path-cta></span> <i aria-hidden="true">↗︎</i></span>
+          </div>
+        </a>
+        <a class="path path--soon" data-path="water" data-cursor="Enter">
+          <div class="path__media"><img alt="" data-src-key="water"></div>
+          <div class="path__body">
+            <span class="logo logo--water path__logo" aria-hidden="true"></span>
+            <b class="path__name display">Water</b>
+            <p class="path__slogan" data-path-slogan></p>
+            <span class="path__cta mono"><span data-path-cta></span> <i aria-hidden="true">↗︎</i></span>
+          </div>
+        </a>
       </div>
-      <form class="builder" id="builder" novalidate>
-        <div class="builder__bar"><span id="stepBar"></span></div>
-        <p class="builder__top mono"><b id="stepNow">1</b> / <span id="stepAll">5</span></p>
-
-        <div class="step is-active" data-step="type">
-          <p class="display step__q">What would you like to <em>transform?</em></p>
-          <div class="choices">
-            <a class="choice" data-portal="scaping" href="#" data-cursor="Enter"><span><span class="logo logo--scaping choice__logo" aria-hidden="true"></span><b>Landscape</b><small>Landscape design &amp; outdoor living</small><i class="choice__to mono">Visit site ↗︎</i></span></a>
-            <a class="choice" data-portal="home" href="#" data-cursor="Enter"><span><span class="logo logo--home choice__logo" aria-hidden="true"></span><b>Home</b><small>Home remodeling &amp; improvements</small><i class="choice__to mono">Visit site ↗︎</i></span></a>
-            <a class="choice choice--soon" data-water-choice href="#water"><span><span class="logo logo--water choice__logo" aria-hidden="true"></span><b>Water <em class="tag" data-water-tag></em></b><small>Custom pools &amp; water features</small><i class="choice__to mono">Coming soon ↓</i></span></a>
-            <button type="button" class="choice choice--wide" data-complete><span><span class="logo logo--tmb choice__logo" aria-hidden="true"></span><b>Complete transformation</b><small>More than one specialty. Trinity coordinates every part of the property.</small><i class="choice__to mono">Start with Trinity →</i></span></button>
-          </div>
-        </div>
-
-        <fieldset class="step" data-step="where">
-          <legend class="display step__q"><em>Where</em> is the property?</legend>
-          <label class="field"><span class="mono">City or ZIP code</span><input name="location" autocomplete="postal-code" placeholder="e.g. Walnut Creek, 94596"></label>
-          <button type="button" class="btn" data-next>Continue <i aria-hidden="true">→</i></button>
-        </fieldset>
-
-        <fieldset class="step" data-step="when">
-          <legend class="display step__q"><em>When</em> should it begin?</legend>
-          <div class="choices choices--row">
-            <label class="choice"><input type="radio" name="when" value="As soon as possible"><span><b>As soon as possible</b></span></label>
-            <label class="choice"><input type="radio" name="when" value="3–6 months"><span><b>3–6 months</b></span></label>
-            <label class="choice"><input type="radio" name="when" value="6–12 months"><span><b>6–12 months</b></span></label>
-            <label class="choice"><input type="radio" name="when" value="Flexible"><span><b>Flexible</b></span></label>
-          </div>
-        </fieldset>
-
-        <fieldset class="step" data-step="story">
-          <legend class="display step__q">Tell us about your <em>vision.</em></legend>
-          <label class="field"><span class="mono">How do you want to live there?</span><textarea name="vision" rows="3" placeholder="Long dinners outside, a kitchen that brings everyone together…"></textarea></label>
-          <button type="button" class="btn" data-next>Continue <i aria-hidden="true">→</i></button>
-        </fieldset>
-
-        <fieldset class="step" data-step="contact">
-          <legend class="display step__q">How do we <em>reach you?</em></legend>
-          <div class="fields">
-            <label class="field"><span class="mono">Name</span><input name="name" autocomplete="name" required></label>
-            <label class="field"><span class="mono">Email</span><input name="email" type="email" autocomplete="email" required></label>
-          </div>
-          <p class="form-error" id="formError" role="alert"></p>
-          <button type="submit" class="btn btn--gold">Begin with Trinity <i aria-hidden="true">→</i></button>
-        </fieldset>
-
-        <div class="step step--done" data-step="done" tabindex="-1">
-          <p class="display step__q">Your project <em>has begun.</em></p>
-          <p>A Trinity designer will review your brief and reach out personally.</p>
-        </div>
-
-        <button type="button" class="builder__back mono" id="backBtn" hidden>← Back</button>
-      </form>
     </section>
   </main>
 
@@ -486,7 +482,8 @@ txZhjgAAAABJRU5ErkJggg=="/></g></g><g class="tmb-shines"><rect class="tmb-shine"
   <footer class="close" id="close" data-theme="light" data-atmos="bone" data-chapter="Trinity Master Builders">
     <p class="eyebrow mono">Trinity Master Builders</p>
     <h2 class="close__title display">Let’s build something <em>remarkable.</em></h2>
-    <a class="btn btn--dark" href="#vision" data-cursor="Begin">Build your vision <i aria-hidden="true">→</i></a>
+    <a class="btn btn--dark" href="#vision" data-cursor="Begin">Start a project <i aria-hidden="true">→</i></a>
+    <div class="close__mark" id="closeMark"></div>
     <div class="close__base">
       <svg class="mark mark--foot" id="footMark" viewBox="-300 -300 600 600" aria-hidden="true"></svg>
       <a class="mono close__mail" id="mailLink" href="#"></a>
