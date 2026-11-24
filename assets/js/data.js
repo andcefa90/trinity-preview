@@ -32,7 +32,7 @@ window.TRINITY = {
       url: 'https://caliscaping.com/', domain: 'caliscaping.com',
       // Cali Scaping's own project photography
       image: { src: 'assets/img/scaping.webp', alt: 'Cedar deck opening onto a stone-path garden with outdoor kitchen and fire pit' },
-      copy: { badge: '', kicker: 'Professional Landscaping', title: 'Designed to inspire. Build to last.', status: 'Now building', cta: 'Enter Cali Scaping' },
+      copy: { badge: '', kicker: 'Professional Landscaping', title: 'Designed to inspire. Built to last.', status: 'Now building', cta: 'Enter Cali Scaping' },
       vision: ['Landscape design', 'Outdoor kitchens', 'Hardscape + stone', 'Garden lighting'],
     },
     home: {
