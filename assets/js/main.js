@@ -184,13 +184,13 @@
   // Our story: chapters and beats (copy + photos); the last beat closes on the drawing-board mark
   const ST = D.story;
   $('#storyChapters').innerHTML = ST.chapters.map((c) =>
-    `<p class="story__chapter"><span class="logo logo--${c.logo}"></span><span><span class="mono">Chapter ${c.numeral} · ${c.note}</span><b class="display">${c.name}</b></span></p>`).join('');
+    `<p class="story__chapter"><span class="logo logo--${c.logo}"></span><b class="display">${c.name}</b></p>`).join('');
   $('#storyBeats').innerHTML = ST.beats.map((b, i) => {
     const c = ST.chapters[b.chapter];
     const fig = b.mark
       ? `<div class="story__fig story__fig--mark"><svg class="mark mark--story" id="storyMark" viewBox="-300 -300 600 600" aria-hidden="true"></svg>${['scaping', 'home', 'water'].map((k, r) => `<span class="story__logo logo logo--${k}" data-ring="${r}" aria-hidden="true"></span>`).join('')}</div>`
       : `<div class="story__fig story__fig--${b.images.length > 1 ? 'duo' : 'solo'}">${b.images.map((im, k) => `<figure class="story__shot"><img data-k="${i}-${k}"></figure>`).join('')}</div>`;
-    return `<article class="story__beat"${i ? ' aria-hidden="true"' : ''}><div class="story__copy"><p class="mono story__chap">${c.numeral} · ${c.name}</p><p class="mono story__k">(${String(i + 1).padStart(2, '0')})</p><h3 class="display story__h">${b.title}</h3><p class="story__p">${b.body}</p></div>${fig}</article>`;
+    return `<article class="story__beat"${i ? ' aria-hidden="true"' : ''}><div class="story__copy"><p class="mono story__chap">${c.name}</p><p class="mono story__k">(${String(i + 1).padStart(2, '0')})</p><h3 class="display story__h">${b.title}</h3><p class="story__p">${b.body}</p></div>${fig}</article>`;
   }).join('');
   $$('.story__shot img').forEach((img) => { const [i, k] = img.dataset.k.split('-'); const im = ST.beats[i].images[k]; setImg(img, im.src, im.alt, { eager: true }); });
   $('#storyTicks').innerHTML = ST.beats.map((b, i) => `<li${i && b.chapter !== ST.beats[i - 1].chapter ? ' class="is-new"' : ''}><i></i></li>`).join('');
