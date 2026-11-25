@@ -17,12 +17,41 @@ window.TRINITY = {
 
   hero: { image: 'assets/img/hero.jpg', alt: 'Garden path at dusk leading to a lit stone-wall patio under a cedar pergola' }, // Trinity project
 
-  // Our story — DRAFT beats until the founder's story arrives; each beat lights one more ring
-  story: [
-    { kicker: 'One belief', title: 'A home is not built in pieces.', body: 'The garden, the rooms and the water should feel like one place, designed with the same care and built to the same standard.' },
-    { kicker: 'Three crafts', title: 'Every craft, its own specialist.', body: 'Cali Scaping shapes the land. Cali Home Improvements transforms the interiors. Cali WaterScapes brings water to life.' },
-    { kicker: 'One name', title: 'Trinity Master Builders.', body: 'Three companies, one team. We carry your vision from the first idea to the final detail, so the place you imagine is the place you live in.' },
-  ],
+  // Our story — the founder's own words (Trinity's Instagram series), one beat per scroll step.
+  // `chapter` indexes story.chapters; body may use <b> for emphasis; the last beat closes on the Trinity mark.
+  // Photos are crops of the posts until the original files arrive.
+  story: {
+    chapters: [
+      { logo: 'scaping', numeral: 'I', name: 'Cali Scaping', note: 'Outside · since 2021' },
+      { logo: 'home', numeral: 'II', name: 'Cali Home Improvements', note: 'Inside' },
+      { logo: 'tmb', numeral: 'III', name: 'Trinity Master Builders', note: 'Together' },
+    ],
+    beats: [
+      { chapter: 0, title: 'It started with my father.',
+        body: 'He was a jack-of-all-trades and <b>my greatest mentor.</b> Growing up at his side, I didn\u2019t just learn how to build. <b>I learned</b> to listen to nature, work with intention, and show up with total pride in <b>everything I touched.</b>',
+        images: [{ src: 'assets/img/story/story-founder.jpg', alt: 'The founder standing on a newly built retaining wall and stone stairs' }] },
+      { chapter: 0, title: 'Working with nature, not against it.',
+        body: '<b>He taught me</b> that outdoor spaces aren\u2019t just dirt and stones; they are <b>where memories happen.</b> Long before launching <b>Cali Scaping in 2021,</b> the foundation was already laid in those quiet afternoon lessons about <b>resourcefulness, care, and creative problem-solving.</b>',
+        images: [{ src: 'assets/img/story/story-garden.jpg', alt: 'Drought-tolerant garden with a stepping-stone path and flowering lilac' }, { src: 'assets/img/story/story-stone.jpg', alt: 'Standing stone in a river-rock garden bed' }] },
+      { chapter: 0, title: 'Scaping your dreams.',
+        body: 'That\u2019s where our name comes from. \u201cCali\u201d grounds us in home, but \u201cScaping\u201d comes from <b>taking what exists in your imagination</b> and carefully shaping it into reality. Every project is my <b>opportunity to honor</b> what he taught me: to <b>transform a space</b> into something that truly <b>changes how you live.</b>',
+        images: [{ src: 'assets/img/story/story-house.jpg', alt: 'Terraced hillside garden with flagstone paths and a horizontal cedar fence' }] },
+      { chapter: 0, title: 'Carrying the torch every day.',
+        body: 'Today, those quiet lessons are the exact reason our work is recognized <b>with industry awards.</b> <b>Behind every award</b> is the spirit of the man who taught me to do things right. <b>Every space we transform</b> is my way of <b>honoring his memory</b> and saying thank you.',
+        images: [{ src: 'assets/img/story/story-award.jpg', alt: 'The founder receiving a CLCA landscape award' }] },
+      { chapter: 1, title: '\u201cCan you bring this inside?\u201d',
+        body: 'After years of <b>transforming yards</b> and engineering outdoor spaces through Cali Scaping, something special started happening. Our clients would walk out into their newly built backyards, look back at their houses, and ask: <b>\u201cCan you bring this same level of craftsmanship inside?\u201d</b>',
+        images: [{ src: 'assets/img/scaping.webp', alt: 'Cedar deck opening onto a stone-path garden with outdoor kitchen and fire pit' }] },
+      { chapter: 1, title: 'Built on earned trust.',
+        body: 'Finding <b>a contractor you can actually trust</b> with your home isn\u2019t easy. You already knew our work ethic, our transparency, and <b>our refusal to cut corners outdoors.</b> <b>Cali Home</b> was born out of that exact bond, to give our clients a <b>seamless, worry-free experience</b> for their entire property, from the inside out.',
+        images: [{ src: 'assets/img/story/story-kitchen.jpg', alt: 'Remodeled kitchen with warm under-cabinet lighting and wood floors' }, { src: 'assets/img/story/story-kitchen-2.jpg', alt: 'Open kitchen with a waterfall island and glass pantry' }] },
+      { chapter: 1, title: 'Elevating how you live indoors.',
+        body: '\u201cCali\u201d still grounds us in home, but <b>Cali Home</b> focuses on the sanctuary within your walls. From <b>custom kitchen</b> redesigns to complete interior transformations, <b>we apply the same structural integrity,</b> budget transparency, and master craftsmanship to your <b>indoor living spaces.</b>',
+        images: [{ src: 'assets/img/story/story-bath.jpg', alt: 'Remodeled bathroom with backlit vanity mirror and veined stone walls' }] },
+      { chapter: 2, mark: true, title: 'One name. Every space.',
+        body: 'The garden, the rooms, and next, the water. <b>Cali Scaping, Cali Home Improvements and Cali WaterScapes</b> now stand together as <b>Trinity Master Builders:</b> one standard, carried from the first idea to the final detail.' },
+    ],
+  },
 
   services: {
     scaping: {

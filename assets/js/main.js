@@ -181,7 +181,20 @@
     return svg;
   });
   buildMark($('#footMark'), { weight: 1.5 });
-  // Our story: the drawing-board mark, each ring gilded as its beat arrives
+  // Our story: chapters and beats (copy + photos); the last beat closes on the drawing-board mark
+  const ST = D.story;
+  $('#storyChapters').innerHTML = ST.chapters.map((c) =>
+    `<p class="story__chapter"><span class="logo logo--${c.logo}"></span><span><span class="mono">Chapter ${c.numeral} · ${c.note}</span><b class="display">${c.name}</b></span></p>`).join('');
+  $('#storyBeats').innerHTML = ST.beats.map((b, i) => {
+    const c = ST.chapters[b.chapter];
+    const fig = b.mark
+      ? `<div class="story__fig story__fig--mark"><svg class="mark mark--story" id="storyMark" viewBox="-300 -300 600 600" aria-hidden="true"></svg>${['scaping', 'home', 'water'].map((k, r) => `<span class="story__logo logo logo--${k}" data-ring="${r}" aria-hidden="true"></span>`).join('')}</div>`
+      : `<div class="story__fig story__fig--${b.images.length > 1 ? 'duo' : 'solo'}">${b.images.map((im, k) => `<figure class="story__shot"><img data-k="${i}-${k}"></figure>`).join('')}</div>`;
+    return `<article class="story__beat"${i ? ' aria-hidden="true"' : ''}><div class="story__copy"><p class="mono story__chap">${c.numeral} · ${c.name}</p><p class="mono story__k">(${String(i + 1).padStart(2, '0')})</p><h3 class="display story__h">${b.title}</h3><p class="story__p">${b.body}</p></div>${fig}</article>`;
+  }).join('');
+  $$('.story__shot img').forEach((img) => { const [i, k] = img.dataset.k.split('-'); const im = ST.beats[i].images[k]; setImg(img, im.src, im.alt, { eager: true }); });
+  $('#storyTicks').innerHTML = ST.beats.map((b, i) => `<li${i && b.chapter !== ST.beats[i - 1].chapter ? ' class="is-new"' : ''}><i></i></li>`).join('');
+  $('#storyAll').textContent = String(ST.beats.length).padStart(2, '0');
   const storyMark = buildMark($('#storyMark'), { guides: true, shine: true });
   $$('.story__logo').forEach((l) => { const g = geom[+l.dataset.ring]; l.style.setProperty('--bx', `${50 + g.cx / 6}%`); l.style.setProperty('--by', `${50 + g.cy / 6}%`); });
 
@@ -211,11 +224,6 @@
 
   const mail = $('#mailLink'); mail.href = `mailto:${D.settings.email}`; mail.textContent = D.settings.email;
   $$('[data-phone]').forEach((a) => { a.href = `tel:${D.settings.phone.replace(/\D/g, '')}`; a.textContent = D.settings.phone; });
-
-  // Our story beats
-  $('#storyBeats').innerHTML = D.story.map((b, i) =>
-    `<article class="story__beat"${i ? ' aria-hidden="true"' : ''}><p class="mono story__k">${b.kicker}</p><h3 class="display story__h">${b.title}</h3><p class="story__p">${b.body}</p></article>`).join('');
-  $('#storyAll').textContent = String(D.story.length).padStart(2, '0');
 
   // Start a project — each business line goes to its own site; the whole property goes to Trinity by email
   $$('[data-path]').forEach((a) => {
@@ -489,39 +497,46 @@
         .to({}, { duration: 0.7 });
     });
 
-    /* ---- 6 · Our story: one beat per ring, then the knot closes ---- */
+    /* ---- 6 · Our story: one beat per scroll step; the last beat knots the three rings ---- */
     {
       const P = storyMark.parts, beats = $$('.story__beat'), n = beats.length;
+      const chapters = $$('.story__chapter'), ticks = $$('#storyTicks i');
       const lines = P.guides.filter((g) => g.getAttribute('pathLength'));
       const ring = (i) => $$(`.ring[data-ring="${i}"]`, storyMark);
       const logos = $$('.story__logo');
+      let cur = -1, knot = null;
       const setBeat = (i) => {
-        beats.forEach((b, k) => { b.classList.toggle('is-on', k === i); b.setAttribute('aria-hidden', k !== i); });
+        if (i === cur) return;
+        const ch = ST.beats[i].chapter;
+        beats.forEach((b, k) => { b.classList.toggle('is-on', k === i); b.classList.toggle('is-past', k < i); b.setAttribute('aria-hidden', k !== i); });
+        chapters.forEach((c, k) => { c.classList.toggle('is-on', k === ch); c.classList.toggle('is-past', k < ch); });
         $('#storyNow').textContent = String(i + 1).padStart(2, '0');
+        if (knot) ST.beats[i].mark ? knot.play() : knot.reverse();
+        cur = i;
       };
       setBeat(0);
       if (rm) { beats.forEach((b) => { b.classList.add('is-on'); b.removeAttribute('aria-hidden'); }); }
       else {
-        const tl = gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: {
-          trigger: '#story', pin: '.story__pin', start: 'top top', end: `+=${n * 110}%`, scrub: 0.7,
-          onUpdate: (s) => { setBeat(Math.min(n - 1, Math.floor(s.progress * n * 0.999))); gsap.set('#storyBar', { scaleX: s.progress }); },
-        } });
-        // beat 1 — the drawing board: guides and the three hairlines
-        tl.fromTo('.story__grid', { opacity: 0 }, { opacity: 1, duration: 0.4 }, 0)
-          .fromTo(lines, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.5, stagger: 0.04 }, 0)
-          .fromTo(P.hairs, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.6, stagger: 0.1 }, 0.3)
-          .set([...P.ribs.flat(), ...P.patches, ...P.shines], { opacity: 0 }, 0)
-          .set(logos, { opacity: 0, scale: 0.6 }, 0);
-        // beat 2 — each craft takes its ring, with its brand inside
+        // the closing mark: guides draw, each craft takes its ring with its brand, then the weave closes
+        gsap.set([...P.ribs.flat(), ...P.patches, ...P.shines], { opacity: 0 });
+        gsap.set(logos, { opacity: 0, scale: 0.6 });
+        knot = gsap.timeline({ paused: true, defaults: { ease: 'power2.out' } })
+          .fromTo(lines, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.7, stagger: 0.04 }, 0)
+          .fromTo(P.hairs, { strokeDasharray: 1, strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 0.9, stagger: 0.12 }, 0.2);
         [0, 1, 2].forEach((i) => {
-          tl.to(ring(i).filter((g) => !g.hasAttribute('mask')).flatMap((g) => [...g.children]), { opacity: 1, duration: 0.25 }, 1 + i * 0.28)
-            .to(logos[i], { opacity: 1, scale: 1, duration: 0.25, ease: 'back.out(2)' }, 1.05 + i * 0.28);
+          knot.to(ring(i).filter((g) => !g.hasAttribute('mask')).flatMap((g) => [...g.children]), { opacity: 1, duration: 0.4 }, 0.9 + i * 0.3)
+            .to(logos[i], { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)' }, 0.95 + i * 0.3);
         });
-        // beat 3 — the weave closes into one name
-        tl.to([...P.patches, ...P.shines], { opacity: 1, duration: 0.2 }, 2.05)
-          .to([...P.guides, ...P.hairs], { opacity: 0.25, duration: 0.4 }, 2.1)
-          .to('.story__mark', { scale: 1.06, duration: 0.5, ease: 'power2.out' }, 2.1)
-          .to({}, { duration: 0.6 }, 2.4);
+        knot.to([...P.patches, ...P.shines], { opacity: 1, duration: 0.3 }, 1.9)
+          .to([...P.guides, ...P.hairs], { opacity: 0.25, duration: 0.6 }, 2);
+        ScrollTrigger.create({
+          trigger: '#story', pin: '.story__pin', start: 'top top', end: `+=${n * 85}%`,
+          onUpdate: (s) => {
+            const t = s.progress * n;
+            setBeat(Math.min(n - 1, Math.floor(t * 0.9999)));
+            ticks.forEach((tk, k) => gsap.set(tk, { scaleX: gsap.utils.clamp(0, 1, t - k) }));
+          },
+        });
       }
     }
 
