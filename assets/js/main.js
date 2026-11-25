@@ -183,6 +183,9 @@
   buildMark($('#footMark'), { weight: 1.5 });
   // Our story: chapters and beats (copy + photos); the last beat closes on the drawing-board mark
   const ST = D.story;
+  setImg($('#storyIntroImg'), ST.intro.image, '', { eager: true });
+  $('#storyTag').textContent = ST.intro.tagline;
+  $$('.story__word').forEach((w) => (w.innerHTML = [...w.textContent].map((c) => `<span class="ch" aria-hidden="true">${c}</span>`).join('')));
   $('#storyChapters').innerHTML = ST.chapters.map((c) =>
     `<p class="story__chapter"><span class="logo logo--${c.logo}"></span><b class="display">${c.name}</b></p>`).join('');
   $('#storyBeats').innerHTML = ST.beats.map((b, i) => {
@@ -497,7 +500,7 @@
         .to({}, { duration: 0.7 });
     });
 
-    /* ---- 6 · Our story: one beat per scroll step; the last beat knots the three rings ---- */
+    /* ---- 6 · Our story: the title overture, one beat per scroll step, then the knot ---- */
     {
       const P = storyMark.parts, beats = $$('.story__beat'), n = beats.length;
       const chapters = $$('.story__chapter'), ticks = $$('#storyTicks i');
@@ -507,14 +510,14 @@
       let cur = -1, knot = null;
       const setBeat = (i) => {
         if (i === cur) return;
-        const ch = ST.beats[i].chapter;
+        const B = ST.beats[i], ch = B ? B.chapter : -1;
         beats.forEach((b, k) => { b.classList.toggle('is-on', k === i); b.classList.toggle('is-past', k < i); b.setAttribute('aria-hidden', k !== i); });
         chapters.forEach((c, k) => { c.classList.toggle('is-on', k === ch); c.classList.toggle('is-past', k < ch); });
-        $('#storyNow').textContent = String(i + 1).padStart(2, '0');
-        if (knot) ST.beats[i].mark ? knot.play() : knot.reverse();
+        $('#storyNow').textContent = String(Math.max(i, 0) + 1).padStart(2, '0');
+        if (knot) B && B.mark ? knot.play() : knot.reverse();
         cur = i;
       };
-      setBeat(0);
+      setBeat(rm ? 0 : -1);
       if (rm) { beats.forEach((b) => { b.classList.add('is-on'); b.removeAttribute('aria-hidden'); }); }
       else {
         // the closing mark: guides draw, each craft takes its ring with its brand, then the weave closes
@@ -529,11 +532,31 @@
         });
         knot.to([...P.patches, ...P.shines], { opacity: 1, duration: 0.3 }, 1.9)
           .to([...P.guides, ...P.hairs], { opacity: 0.25, duration: 0.6 }, 2);
+
+        // overture, part 1 — as the section arrives the title rises letter by letter over a small window
+        const oval = (w, h) => `ellipse(${w}% ${h}% at 50% 50%)`, small = mob ? oval(30, 17) : oval(13, 20);
+        gsap.timeline({ defaults: { ease: 'none' }, scrollTrigger: { trigger: '#story', start: 'top 80%', end: 'top top', scrub: 0.6 } })
+          .fromTo('.story__media', { clipPath: oval(0, 0) }, { clipPath: small, duration: 0.8, ease: 'power2.out' }, 0.15)
+          .fromTo('.story__word .ch', { yPercent: 115, rotation: 6 }, { yPercent: 0, rotation: 0, stagger: 0.07, duration: 0.55, ease: 'power3.out' }, 0)
+          .fromTo('.story__tag', { opacity: 0, y: 20 }, { opacity: 0.75, y: 0, duration: 0.35 }, 0.6);
+
+        // overture, part 2 (pinned) — the window opens onto the founder, then the title parts like the hero's
+        const INTRO = 1.6, total = n * 0.85 + INTRO, f = INTRO / total;
+        const overture = gsap.timeline({ defaults: { ease: 'none' } })
+          .fromTo('.story__media', { clipPath: small }, { clipPath: () => (mob ? oval(62, 36) : oval(34, 46)), duration: f * 0.45, ease: 'power2.inOut', immediateRender: false }, 0)
+          .fromTo('.story__media img', { scale: 1.3 }, { scale: 1, duration: f * 0.5, immediateRender: false }, 0)
+          .to('.story__tag', { opacity: 0, y: -20, duration: f * 0.2 }, f * 0.48)
+          .to('.story__word:first-child', { x: () => -innerWidth * 0.55, opacity: 0, duration: f * 0.38, ease: 'power2.in' }, f * 0.55)
+          .to('.story__word:last-child', { x: () => innerWidth * 0.55, opacity: 0, duration: f * 0.38, ease: 'power2.in' }, f * 0.55)
+          .to('.story__media', { opacity: 0, scale: 1.08, duration: f * 0.33 }, f * 0.62)
+          .fromTo(['.story__head', '.story__progress'], { opacity: 0 }, { opacity: 1, duration: f * 0.14 }, f * 0.86)
+          .set({}, {}, 1);
         ScrollTrigger.create({
-          trigger: '#story', pin: '.story__pin', start: 'top top', end: `+=${n * 85}%`,
+          trigger: '#story', pin: '.story__pin', start: 'top top', end: `+=${total * 100}%`, animation: overture, scrub: 0.6, invalidateOnRefresh: true,
+          onLeaveBack: () => setBeat(-1),
           onUpdate: (s) => {
-            const t = s.progress * n;
-            setBeat(Math.min(n - 1, Math.floor(t * 0.9999)));
+            const t = ((s.progress - f) / (1 - f)) * n;
+            setBeat(t < 0 ? -1 : Math.min(n - 1, Math.floor(t * 0.9999)));
             ticks.forEach((tk, k) => gsap.set(tk, { scaleX: gsap.utils.clamp(0, 1, t - k) }));
           },
         });

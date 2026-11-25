@@ -21,6 +21,7 @@ window.TRINITY = {
   // `chapter` indexes story.chapters; body may use <b> for emphasis; the last beat closes on the Trinity mark.
   // Photos are crops of the posts until the original files arrive.
   story: {
+    intro: { image: 'assets/img/story/story-founder.jpg', tagline: 'Behind every project we build' },
     chapters: [
       { logo: 'scaping', numeral: 'I', name: 'Cali Scaping', note: 'Outside · since 2021' },
       { logo: 'home', numeral: 'II', name: 'Cali Home Improvements', note: 'Inside' },

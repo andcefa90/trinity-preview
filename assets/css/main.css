@@ -332,6 +332,19 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   background-size: 64px 64px; background-position: center;
   mask-image: radial-gradient(ellipse at 72% 50%, #000 0, transparent 62%);
 }
+/* overture — the title over a window onto the founder (opens, then parts) */
+.story__intro { position: absolute; inset: 0; z-index: 3; display: grid; place-items: center; pointer-events: none; }
+.story__media { position: absolute; inset: 0; clip-path: ellipse(13% 20% at 50% 50%); will-change: clip-path; }
+.story__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 28%; filter: sepia(.5) saturate(.75) brightness(.55) contrast(1.05); }
+.story__media::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 50%, transparent 20%, rgba(18,12,7,.7) 75%); }
+.story__lockup { position: relative; text-align: center; }
+.story__title { font-size: clamp(5rem, 18vw, 21rem); line-height: .8; display: flex; justify-content: center; gap: .16em; }
+.story__word { display: inline-flex; overflow: hidden; padding: .04em .06em .1em; }
+.story__word .ch { display: inline-block; }
+em.story__word { color: var(--gold-hi); }
+.story__tag { margin: 2.2rem 0 0; opacity: .75; }
+.story__tag::before, .story__tag::after { content: ''; display: inline-block; width: 3rem; height: 1px; background: currentColor; vertical-align: middle; margin: 0 1rem; opacity: .5; }
+
 .story__head { position: absolute; z-index: 2; top: calc(var(--gutter) + 4.5rem); left: var(--gutter); }
 .story__head .eyebrow { margin: 0; }
 .story__chapters { display: grid; margin-top: 1.1rem; }
@@ -384,6 +397,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 .story__ticks i { display: block; height: 100%; background: var(--gold-hi); transform: scaleX(0); transform-origin: left; }
 
 .rm .story__pin { height: auto; overflow: visible; padding: calc(var(--gutter) + 6rem) 0 10vh; }
+.rm .story__intro { position: static; padding: 0 var(--gutter) 10vh; }
+.rm .story__media { display: none; }
 .rm .story__head { position: static; padding: 0 var(--gutter) 4rem; }
 .rm .story__chapters, .rm .story__progress { display: none; }
 .rm .story__beats { position: static; }
@@ -509,6 +524,8 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   .site__title em { display: block; }
   .site__foot { flex-direction: column; align-items: flex-start; }
 
+  .story__title { flex-direction: column; align-items: center; font-size: clamp(5rem, 30vw, 9rem); gap: 0; }
+  .story__tag::before, .story__tag::after { width: 1.6rem; margin: 0 .7rem; }
   .story__head { top: calc(var(--gutter) + 3.6rem); }
   .story__chapters { margin-top: .7rem; }
   .story__chapter .logo { --h: 2rem; }
